@@ -1,10 +1,10 @@
 #include "EngineContext.h"
-#include <iostream>
+#include "Logger/Logger.h"
 
 namespace Ethereal
 {
 	void EngineContext::Hello()
 	{
-		std::cout << "Hello from EtherealEngine!\n";
+		EE_LOG_INFO("Hello from EtherealEngine!");
 	}
 }
