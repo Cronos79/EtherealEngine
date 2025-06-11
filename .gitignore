@@ -1,0 +1,30 @@
+# Visual Studio
+.vscode/
+.vs/
+*.user
+*.suo
+*.VC.db
+*.VC.opendb
+
+# Builds
+build/
+bin/
+*.exe
+*.dll
+*.lib
+*.obj
+*.pdb
+*.log
+
+# CMake
+CMakeFiles/
+CMakeCache.txt
+
+# Misc
+*.ipch
+*.pch
+*.aps
+*.ncb
+*.sdf
+*.opensdf
+*.tlog
