@@ -112,7 +112,7 @@
       <ConformanceMode>true</ConformanceMode>
       <LanguageStandard>stdcpp20</LanguageStandard>
       <LanguageStandard_C>stdc17</LanguageStandard_C>
-      <AdditionalIncludeDirectories>$(SolutionDir)Engine\thirdparty\;$(ProjectDir)include\;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>$(SolutionDir)Engine\thirdparty\;$(ProjectDir);%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <AdditionalOptions>/utf-8 %(AdditionalOptions)</AdditionalOptions>
     </ClCompile>
     <Link>
@@ -120,6 +120,7 @@
       <GenerateDebugInformation>true</GenerateDebugInformation>
       <OutputFile>$(OutDir)EtherealEngine.dll</OutputFile>
       <ImportLibrary>$(OutDir)EtherealEngine.lib</ImportLibrary>
+      <AdditionalDependencies>d3d11.lib;dxgi.lib;d3dcompiler.lib;%(AdditionalDependencies)</AdditionalDependencies>
     </Link>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
@@ -132,7 +133,7 @@
       <ConformanceMode>true</ConformanceMode>
       <LanguageStandard>stdcpp20</LanguageStandard>
       <LanguageStandard_C>stdc17</LanguageStandard_C>
-      <AdditionalIncludeDirectories>$(SolutionDir)Engine\thirdparty\;$(ProjectDir)include\;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>$(SolutionDir)Engine\thirdparty\;$(ProjectDir);%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <AdditionalOptions>/utf-8 %(AdditionalOptions)</AdditionalOptions>
     </ClCompile>
     <Link>
@@ -140,19 +141,58 @@
       <GenerateDebugInformation>true</GenerateDebugInformation>
       <OutputFile>$(OutDir)EtherealEngine.dll</OutputFile>
       <ImportLibrary>$(OutDir)EtherealEngine.lib</ImportLibrary>
+      <AdditionalDependencies>d3d11.lib;dxgi.lib;d3dcompiler.lib;%(AdditionalDependencies)</AdditionalDependencies>
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
-    <ClInclude Include="include\EngineContext.h" />
-    <ClInclude Include="include\EtherealEngine.h" />
-    <ClInclude Include="include\Logger\Logger.h" />
-    <ClInclude Include="include\Platform\WinInclude.h" />
+    <ClInclude Include="Assets\AssetManager.h" />
+    <ClInclude Include="Scene\GameObject.h" />
+    <ClInclude Include="Assets\IAsset.h" />
+    <ClInclude Include="Assets\Mesh.h" />
+    <ClInclude Include="Assets\ModelAsset.h" />
+    <ClInclude Include="Core\Transform.h" />
+    <ClInclude Include="Assets\Vertex.h" />
+    <ClInclude Include="Core\Application.h" />
+    <ClInclude Include="Core\EngineContext.h" />
+    <ClInclude Include="Core\EngineUtils.h" />
+    <ClInclude Include="Core\RuntimeInitializer.h" />
+    <ClInclude Include="EngineIncludes.h" />
+    <ClInclude Include="EtherealEngine.h" />
+    <ClInclude Include="Core\Logger.h" />
+    <ClInclude Include="Platform\Window.h" />
+    <ClInclude Include="Platform\WinInclude.h" />
+    <ClInclude Include="Renderer\DX11Renderer.h" />
+    <ClInclude Include="Renderer\Renderer.h" />
+    <ClInclude Include="Scene\Scene.h" />
+    <ClInclude Include="Scene\SceneLoader.h" />
+    <ClInclude Include="Scene\SceneManager.h" />
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="src\EngineContext.cpp" />
-    <ClCompile Include="src\Logger\Logger.cpp" />
+    <ClCompile Include="Assets\AssetManager.cpp" />
+    <ClCompile Include="Scene\GameObject.cpp" />
+    <ClCompile Include="Assets\ModelAsset.cpp" />
+    <ClCompile Include="Core\Transform.cpp" />
+    <ClCompile Include="Core\Application.cpp" />
+    <ClCompile Include="Core\EngineContext.cpp" />
+    <ClCompile Include="Core\Logger.cpp" />
+    <ClCompile Include="Core\RuntimeInitializer.cpp" />
+    <ClCompile Include="Platform\Window.cpp" />
+    <ClCompile Include="Renderer\DX11Renderer.cpp" />
+    <ClCompile Include="Scene\Scene.cpp" />
+    <ClCompile Include="Scene\SceneLoader.cpp" />
+    <ClCompile Include="Scene\SceneManager.cpp" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="packages.config" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">
+    <Import Project="..\packages\nlohmann.json.3.12.0\build\native\nlohmann.json.targets" Condition="Exists('..\packages\nlohmann.json.3.12.0\build\native\nlohmann.json.targets')" />
   </ImportGroup>
+  <Target Name="EnsureNuGetPackageBuildImports" BeforeTargets="PrepareForBuild">
+    <PropertyGroup>
+      <ErrorText>This project references NuGet package(s) that are missing on this computer. Use NuGet Package Restore to download them.  For more information, see http://go.microsoft.com/fwlink/?LinkID=322105. The missing file is {0}.</ErrorText>
+    </PropertyGroup>
+    <Error Condition="!Exists('..\packages\nlohmann.json.3.12.0\build\native\nlohmann.json.targets')" Text="$([System.String]::Format('$(ErrorText)', '..\packages\nlohmann.json.3.12.0\build\native\nlohmann.json.targets'))" />
+  </Target>
 </Project>
