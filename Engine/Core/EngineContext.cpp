@@ -18,10 +18,12 @@ namespace Ethereal
 		s_Instance.reset();
 	}
 
-	//EngineContext& EngineContext::Get()
-	//{
-	//	return *s_Instance;
-	//}
+	EngineContext& EngineContext::Get()
+	{
+		if (!s_Instance)
+			Create();
+		return *s_Instance;
+	}
 
 	void EngineContext::Init(void* windowHandle)
 	{		

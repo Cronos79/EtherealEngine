@@ -28,7 +28,6 @@ namespace Ethereal
 	protected:
 		bool m_Running = true;
 		Window m_Window;
-		EngineContext g_Engine;
 	};
 
 	Application* CreateApplication();  // Forward declaration for GameApp

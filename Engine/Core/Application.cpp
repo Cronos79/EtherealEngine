@@ -13,24 +13,26 @@ namespace Ethereal
 
 	Application::~Application()
 	{
-		RuntimeInitializer::Shutdown(g_Engine);
+		auto& engine = EngineContext::Get();
+		RuntimeInitializer::Shutdown(engine);
 	}
 
 	void Application::Run()
 	{
-		RuntimeInitializer::Initialize(g_Engine, m_Window.GetHandle());
+		auto& engine = EngineContext::Get();
+		RuntimeInitializer::Initialize(engine, m_Window.GetHandle());
 	
 		OnInit();
 
-		while (m_Running && g_Engine.IsRunning())
+		while (m_Running && engine.IsRunning())
 		{
 			m_Running = m_Window.ProcessMessages();
 
-			g_Engine.GetRenderer()->BeginFrame();
+			engine.GetRenderer()->BeginFrame();
 
 			OnUpdate();
 
-			g_Engine.GetRenderer()->EndFrame();
+			engine.GetRenderer()->EndFrame();
 		}
 
 		OnShutdown();

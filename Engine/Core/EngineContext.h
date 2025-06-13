@@ -13,7 +13,7 @@ namespace Ethereal
 	public:
 		static void Create();
 		static void Destroy();
-		//static EngineContext& Get();
+		static EngineContext& Get();
 
 		void Init(void* windowHandle);
 		void Shutdown();

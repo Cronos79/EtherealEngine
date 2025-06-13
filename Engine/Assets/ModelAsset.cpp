@@ -24,6 +24,33 @@ namespace Ethereal
 			return false;
 		}
 
+		m_Materials.clear();
+
+		for (unsigned int i = 0; i < scene->mNumMaterials; ++i)
+		{
+			const aiMaterial* aiMat = scene->mMaterials[i];
+			auto material = std::make_shared<Material>();
+
+			aiColor3D color(1.0f, 1.0f, 1.0f);
+			if (AI_SUCCESS == aiMat->Get(AI_MATKEY_COLOR_DIFFUSE, color))
+			{
+				const DirectX::XMFLOAT3 colorF3(color.r, color.g, color.b);
+				material->SetDiffuseColor(colorF3);
+			}
+
+			if (aiMat->GetTextureCount(aiTextureType_DIFFUSE) > 0)
+			{
+				aiString path;
+				if (AI_SUCCESS == aiMat->GetTexture(aiTextureType_DIFFUSE, 0, &path))
+				{
+					//material->SetDiffuseTexturePath(path.C_Str());
+					// You'll handle loading the texture in Material later
+				}
+			}
+
+			m_Materials.push_back(material);
+		}
+
 		for (unsigned int m = 0; m < scene->mNumMeshes; ++m)
 		{
 			const aiMesh* assimpMesh = scene->mMeshes[m];

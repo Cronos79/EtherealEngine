@@ -4,6 +4,7 @@
 #include <memory>
 #include "Assets/IAsset.h"
 #include "Assets/ModelAsset.h"
+#include "Assets/TextureAsset.h"
 #include "EtherealEngine.h"
 
 namespace Ethereal
@@ -16,6 +17,7 @@ namespace Ethereal
 
 		bool LoadRegistry(const std::string& path);
 		bool LoadModel(const std::string& name);
+		bool LoadTexture(const std::string& name, ID3D11Device* device);
 
 		template<typename T>
 		std::shared_ptr<T> Get(const std::string& name)

@@ -69,4 +69,35 @@ namespace Ethereal
 		EE_LOG_INFO("Model '{}' loaded successfully from '{}'", name, fullPath.string());
 		return true;
 	}
+
+	bool AssetManager::LoadTexture(const std::string& name, ID3D11Device* device)
+	{
+		if (m_Assets.find(name) != m_Assets.end())
+		{
+			EE_LOG_INFO("Texture '{}' is already loaded.", name);
+			return true;
+		}
+
+		auto it = m_Registry.find(name);
+		if (it == m_Registry.end())
+		{
+			EE_LOG_ERROR("Texture '{}' not found in registry.", name);
+			return false;
+		}
+
+		std::filesystem::path fullPath = GetAssetsDirectory();
+		fullPath /= it->second;
+
+		auto texture = std::make_shared<TextureAsset>();
+		if (!texture->LoadFromFile(device, fullPath.string()))
+		{
+			EE_LOG_ERROR("Failed to load texture '{}': {}", name, fullPath.string());
+			return false;
+		}
+
+		m_Assets[name] = texture;
+		EE_LOG_INFO("Texture '{}' loaded successfully from '{}'", name, fullPath.string());
+		return true;
+	}
+
 }

@@ -12,11 +12,12 @@ GameApp::~GameApp()
 }
 
 void GameApp::OnInit()
-{	
-	auto sceneManager = g_Engine.GetSceneManager();
+{
+	auto& engine = Ethereal::EngineContext::Get();
+	auto sceneManager = engine.GetSceneManager();
 	std::string scenePath = (GetAssetsDirectory() / "Scenes/TestScene.json").string();
 
-	if (!sceneManager->LoadScene(scenePath, g_Engine.GetAssetManager()))
+	if (!sceneManager->LoadScene(scenePath, engine.GetAssetManager()))
 	{
 		GAME_LOG_ERROR("Failed to load scene: TestScene");
 		return;

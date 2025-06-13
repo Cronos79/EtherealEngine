@@ -4,7 +4,9 @@
 #include "Assets/Mesh.h"
 #include <vector>
 #include <string>
+#include <memory>
 #include "EtherealEngine.h"
+#include "Assets/Material.h"
 
 namespace Ethereal
 {
@@ -17,8 +19,13 @@ namespace Ethereal
 		{
 			return m_Meshes;
 		}
+		const std::vector<std::shared_ptr<Material>>& GetMaterials() const
+		{
+			return m_Materials;
+		}
 
 	private:
 		std::vector<Mesh> m_Meshes;
+		std::vector<std::shared_ptr<Material>> m_Materials;
 	};
 }
