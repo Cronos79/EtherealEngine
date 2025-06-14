@@ -166,7 +166,6 @@
     <ClInclude Include="Renderer\DX11Renderer.h" />
     <ClInclude Include="Renderer\Renderer.h" />
     <ClInclude Include="Scene\Scene.h" />
-    <ClInclude Include="Scene\SceneLoader.h" />
     <ClInclude Include="Scene\SceneManager.h" />
   </ItemGroup>
   <ItemGroup>
@@ -183,7 +182,6 @@
     <ClCompile Include="Platform\Window.cpp" />
     <ClCompile Include="Renderer\DX11Renderer.cpp" />
     <ClCompile Include="Scene\Scene.cpp" />
-    <ClCompile Include="Scene\SceneLoader.cpp" />
     <ClCompile Include="Scene\SceneManager.cpp" />
   </ItemGroup>
   <ItemGroup>

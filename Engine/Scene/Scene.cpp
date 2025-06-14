@@ -2,6 +2,17 @@
 
 namespace Ethereal
 {
+
+	Scene::Scene()
+	{
+
+	}
+
+	Scene::~Scene()
+	{
+
+	}
+
 	void Scene::AddGameObject(const std::shared_ptr<GameObject>& gameObject)
 	{
 		m_GameObjects.push_back(gameObject);

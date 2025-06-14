@@ -4,6 +4,7 @@
 #include <nlohmann/json.hpp>
 #include <fstream>
 #include "Core/EngineUtils.h"
+#include "Scene/Scene.h"
 
 namespace Ethereal
 {
@@ -97,6 +98,65 @@ namespace Ethereal
 
 		m_Assets[name] = texture;
 		EE_LOG_INFO("Texture '{}' loaded successfully from '{}'", name, fullPath.string());
+		return true;
+	}
+
+	bool AssetManager::LoadSceneFromFile(const std::string& name)
+	{
+		auto it = m_Registry.find(name);
+		if (it == m_Registry.end())
+		{
+			EE_LOG_ERROR("Scene '{}' not found in registry.", name);
+			return false;
+		}
+
+		std::filesystem::path fullPath = GetAssetsDirectory();
+		fullPath /= it->second;
+
+		std::ifstream file(fullPath);
+		if (!file.is_open())
+		{
+			EE_LOG_ERROR("Failed to open scene file: {}", fullPath.string());
+			return false;
+		}
+
+		nlohmann::json json;
+		file >> json;
+
+		auto scene = std::make_shared<Scene>();
+
+		for (auto& obj : json["game_objects"])
+		{
+			std::string name = obj["name"];
+			auto gameObject = std::make_shared<GameObject>(name);
+
+			// Model
+			std::string modelName = obj["model"];
+			LoadModel(modelName);
+			auto model = Get<ModelAsset>(modelName);
+			if (model)
+			{
+				gameObject->SetModel(model);
+			}
+			else
+			{
+				EE_LOG_WARN("Model '{}' not found for GameObject '{}'", modelName, name);
+			}
+
+			// Transform
+			DirectX::XMFLOAT3 pos = { obj["position"][0], obj["position"][1], obj["position"][2] };
+			DirectX::XMFLOAT3 rot = { obj["rotation"][0], obj["rotation"][1], obj["rotation"][2] };
+			DirectX::XMFLOAT3 scale = { obj["scale"][0], obj["scale"][1], obj["scale"][2] };
+
+			gameObject->SetPosition(pos);
+			gameObject->SetRotation(rot);
+			gameObject->SetScale(scale);
+
+			scene->AddGameObject(gameObject);
+		}
+
+		m_Assets[name] = scene;
+
 		return true;
 	}
 

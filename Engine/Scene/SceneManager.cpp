@@ -1,5 +1,4 @@
 #include "Scene/SceneManager.h"
-#include "Scene/SceneLoader.h"
 #include "Core/Logger.h"
 #include "Assets/AssetManager.h"
 
@@ -10,17 +9,17 @@ namespace Ethereal
 		EE_LOG_INFO("SceneManager created.");
 	}
 
-	bool SceneManager::LoadScene(const std::string& path, AssetManager* assetMng)
+	bool SceneManager::LoadScene(const std::string& name, AssetManager* assetMng)
 	{
-		auto scene = SceneLoader::LoadFromFile(path, assetMng);
+		auto scene = assetMng->Get<Scene>(name);
 		if (!scene)
 		{
-			EE_LOG_ERROR("Failed to load scene: {}", path);
+			EE_LOG_ERROR("Failed to load scene: {}", name);
 			return false;
 		}
 
 		m_CurrentScene = scene;
-		EE_LOG_INFO("Scene loaded successfully: {}", path);
+		EE_LOG_INFO("Scene loaded successfully: {}", name);
 		return true;
 	}
 

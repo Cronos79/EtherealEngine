@@ -18,6 +18,7 @@ namespace Ethereal
 		bool LoadRegistry(const std::string& path);
 		bool LoadModel(const std::string& name);
 		bool LoadTexture(const std::string& name, ID3D11Device* device);
+		bool LoadSceneFromFile(const std::string& name);
 
 		template<typename T>
 		std::shared_ptr<T> Get(const std::string& name)

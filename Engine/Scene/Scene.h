@@ -6,14 +6,15 @@
 #include <unordered_map>
 #include "GameObject.h"
 #include "EtherealEngine.h"
+#include "Assets/IAsset.h"
 
 namespace Ethereal
 {
-	class ENGINE_API Scene
+	class ENGINE_API Scene : public IAsset
 	{
 	public:
-		Scene() = default;
-		~Scene() = default;
+		Scene();
+		virtual ~Scene() override;
 
 		// Add a GameObject to the scene
 		void AddGameObject(const std::shared_ptr<GameObject>& gameObject);
