@@ -81,4 +81,87 @@ namespace Ethereal
 	{
 		return m_DiffuseColor;
 	}
+
+	void Material::SetVertexShader(const std::string& shaderName)
+	{
+		m_VertexShaderName = shaderName;
+	}
+
+	const std::string& Material::GetVertexShaderName() const
+	{
+		return m_VertexShaderName;
+	}
+
+	void Material::SetPixelShader(const std::string& shaderName)
+	{
+		m_PixelShaderName = shaderName;
+	}
+
+	const std::string& Material::GetPixelShaderName() const
+	{
+		return m_PixelShaderName;
+	}
+
+	ID3D11PixelShader* Material::GetPixelShader() const
+	{
+		return m_PixelShader.Get();
+	}
+
+	Ethereal::ShaderAsset* Material::GetVertexShaderAsset() const
+	{
+		return m_VertexShaderAsset.get();
+	}
+
+	Ethereal::ShaderAsset* Material::GetPixelShaderAsset() const
+	{
+		return m_PixelShaderAsset.get();
+	}
+
+	ID3D11VertexShader* Material::GetVertexShader() const
+	{
+		return m_VertexShader.Get();
+	}
+
+	bool Material::ResolveShaders(AssetManager* assetManager, ID3D11Device* device)
+	{
+		bool success = true;
+
+		// Vertex Shader
+		if (!m_VertexShaderName.empty())
+		{
+			if (!assetManager->LoadShader(m_VertexShaderName, ShaderAsset::ShaderType::Vertex, device))
+				success = false;
+			else
+			{
+				auto shaderAsset = assetManager->Get<ShaderAsset>(m_VertexShaderName);
+				if (shaderAsset && shaderAsset->GetType() == ShaderAsset::ShaderType::Vertex)
+				{
+					m_VertexShaderAsset = shaderAsset;
+					m_VertexShader = shaderAsset->GetVertexShader();
+				}
+				else
+					success = false;
+			}
+		}
+
+		// Pixel Shader
+		if (!m_PixelShaderName.empty())
+		{
+			if (!assetManager->LoadShader(m_PixelShaderName, ShaderAsset::ShaderType::Pixel, device))
+				success = false;
+			else
+			{
+				auto shaderAsset = assetManager->Get<ShaderAsset>(m_PixelShaderName);
+				if (shaderAsset && shaderAsset->GetType() == ShaderAsset::ShaderType::Pixel)
+				{
+					m_PixelShaderAsset = shaderAsset;
+					m_PixelShader = shaderAsset->GetPixelShader();
+				}
+				else
+					success = false;
+			}
+		}
+
+		return success;
+	}
 }

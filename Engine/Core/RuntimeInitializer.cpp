@@ -7,12 +7,15 @@ namespace Ethereal
 	{
 		Logger::Init();
 		engine.Create();
+		auto configPath = GetAssetsDirectory() / "GameConfig.json";
+		GameConfig config = GameConfig::LoadFromFile(configPath.string());
+		engine.SetGameConfig(config);
 		engine.Init(windowHandle);
 
 		auto assetManager = engine.GetAssetManager();
 		assetManager->Initialize();
 		if (assetManager)
-		{
+		{		
 			// Build full path to the asset registry file using GetAssetsDirectory() returns a filesystem::path;
 			auto assetRegistryPath = GetAssetsDirectory() / "asset_registry.json";
 			

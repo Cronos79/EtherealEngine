@@ -5,6 +5,7 @@
 #include <fstream>
 #include "Core/EngineUtils.h"
 #include "Scene/Scene.h"
+#include "Core/EngineContext.h"
 
 namespace Ethereal
 {
@@ -124,6 +125,7 @@ namespace Ethereal
 		file >> json;
 
 		auto scene = std::make_shared<Scene>();
+		scene->SetSceneName(name);
 
 		for (auto& obj : json["game_objects"])
 		{
@@ -157,6 +159,36 @@ namespace Ethereal
 
 		m_Assets[name] = scene;
 
+		return true;
+	}
+
+	bool AssetManager::LoadShader(const std::string& name, ShaderAsset::ShaderType type, ID3D11Device* device)
+	{
+		if (m_Assets.find(name) != m_Assets.end())
+		{
+			EE_LOG_INFO("Shader '{}' already loaded.", name);
+			return true;
+		}
+
+		auto it = m_Registry.find(name);
+		if (it == m_Registry.end())
+		{
+			EE_LOG_ERROR("Shader '{}' not found in registry.", name);
+			return false;
+		}
+
+		std::filesystem::path fullPath = GetAssetsDirectory();
+		fullPath /= it->second;
+
+		auto shader = std::make_shared<ShaderAsset>(type);
+		if (!shader->LoadFromFile(device, fullPath.string()))
+		{
+			EE_LOG_ERROR("Failed to load shader '{}': {}", name, fullPath.string());
+			return false;
+		}
+
+		m_Assets[name] = shader;
+		EE_LOG_INFO("Shader '{}' loaded successfully from '{}'", name, fullPath.string());
 		return true;
 	}
 

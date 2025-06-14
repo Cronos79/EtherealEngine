@@ -3,6 +3,7 @@
 #include <memory>
 #include "Assets/AssetManager.h"
 #include "Scene/SceneManager.h"
+#include "Core/GameConfig.h"
 
 namespace Ethereal
 {
@@ -40,6 +41,43 @@ namespace Ethereal
 			return m_SceneManager.get();
 		}
 
+		const GameConfig& GetGameConfig() const
+		{
+			return m_GameConfig;
+		}
+		void SetGameConfig(const GameConfig& config)
+		{
+			m_GameConfig = config;
+		}
+
+		int32_t GetWidth()
+		{
+			return m_Width;
+		}
+		void SetWidth(int32_t width)
+		{
+			m_Width = width;
+		}
+		int32_t GetHeight()
+		{
+			return m_Height;
+		}
+		void SetHeight(int32_t height)
+		{
+			m_Height = height;
+		}
+
+		void SetScreenSize(int32_t width, int32_t height)
+		{
+			m_Height = height;
+			m_Width = width;
+		}
+
+		float GetAspectRatio()
+		{
+			return (float)m_Width / (float)m_Height;
+		}
+
 	private:
 		static std::unique_ptr<EngineContext> s_Instance;
 
@@ -48,5 +86,9 @@ namespace Ethereal
 		std::shared_ptr<Renderer> m_Renderer;
 		std::unique_ptr<AssetManager> m_AssetManager;
 		std::unique_ptr<SceneManager> m_SceneManager;
+		GameConfig m_GameConfig;
+
+		int32_t m_Width = 1280;
+		int32_t m_Height = 720;
 	};
 }

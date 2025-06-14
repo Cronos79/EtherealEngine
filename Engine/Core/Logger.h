@@ -38,8 +38,8 @@ namespace Ethereal
 #define EE_LOG_ERROR(fmt, ...)    ::Ethereal::Logger::GetCoreLogger()->error("[{}:{}]\n " fmt, ::Ethereal::Internal::ExtractFilename(__FILE__), __LINE__, ##__VA_ARGS__)
 #define EE_LOG_CRITICAL(fmt, ...) ::Ethereal::Logger::GetCoreLogger()->critical("[{}:{}]\n " fmt, ::Ethereal::Internal::ExtractFilename(__FILE__), __LINE__, ##__VA_ARGS__)
 
-#define GAME_LOG_TRACE(fmt, ...)    ::Ethereal::Logger::GetGameLogger()->trace("[{}:{}]\n {}", fmt, ::Ethereal::Internal::ExtractFilename(__FILE__), __LINE__, ##__VA_ARGS__)
-#define GAME_LOG_INFO(fmt, ...)     ::Ethereal::Logger::GetGameLogger()->info("[{}:{}]\n {}", fmt, ::Ethereal::Internal::ExtractFilename(__FILE__), __LINE__, ##__VA_ARGS__)
-#define GAME_LOG_WARN(fmt, ...)     ::Ethereal::Logger::GetGameLogger()->warn("[{}:{}]\n {}", fmt, ::Ethereal::Internal::ExtractFilename(__FILE__), __LINE__, ##__VA_ARGS__)
-#define GAME_LOG_ERROR(fmt, ...)    ::Ethereal::Logger::GetGameLogger()->error("[{}:{}]\n {}", fmt, ::Ethereal::Internal::ExtractFilename(__FILE__), __LINE__, ##__VA_ARGS__)
-#define GAME_LOG_CRITICAL(fmt, ...) ::Ethereal::Logger::GetGameLogger()->critical("[{}:{}]\n {}", fmt, ::Ethereal::Internal::ExtractFilename(__FILE__), __LINE__, ##__VA_ARGS__)
+#define GAME_LOG_TRACE(fmt, ...)    ::Ethereal::Logger::GetGameLogger()->trace("[{}:{}]\n " fmt, ::Ethereal::Internal::ExtractFilename(__FILE__), __LINE__, ##__VA_ARGS__)
+#define GAME_LOG_INFO(fmt, ...)     ::Ethereal::Logger::GetGameLogger()->info("[{}:{}]\n " fmt, ::Ethereal::Internal::ExtractFilename(__FILE__), __LINE__, ##__VA_ARGS__)
+#define GAME_LOG_WARN(fmt, ...)     ::Ethereal::Logger::GetGameLogger()->warn("[{}:{}]\n " fmt, ::Ethereal::Internal::ExtractFilename(__FILE__), __LINE__, ##__VA_ARGS__)
+#define GAME_LOG_ERROR(fmt, ...)    ::Ethereal::Logger::GetGameLogger()->error("[{}:{}]\n " fmt, ::Ethereal::Internal::ExtractFilename(__FILE__), __LINE__, ##__VA_ARGS__)
+#define GAME_LOG_CRITICAL(fmt, ...) ::Ethereal::Logger::GetGameLogger()->critical("[{}:{}]\n " fmt, ::Ethereal::Internal::ExtractFilename(__FILE__), __LINE__, ##__VA_ARGS__)

@@ -3,6 +3,8 @@
 #include <dxgi.h>
 #include "Core/Logger.h"
 #include <stdint.h>
+#include "Assets/AssetManager.h"
+#include "Core/EngineContext.h"
 
 namespace Ethereal
 {
@@ -59,10 +61,44 @@ namespace Ethereal
 		}
 
 		CreateRenderTarget();
+
+		// Setup Dear ImGui context
+		IMGUI_CHECKVERSION();
+		ImGui::CreateContext();
+		ImGuiIO& io = ImGui::GetIO(); (void)io;
+		io.ConfigFlags |= ImGuiConfigFlags_NavEnableKeyboard;     // Enable Keyboard Controls
+		io.ConfigFlags |= ImGuiConfigFlags_NavEnableGamepad;      // Enable Gamepad Controls
+		io.ConfigFlags |= ImGuiConfigFlags_DockingEnable;         // Enable Docking
+		io.ConfigFlags |= ImGuiConfigFlags_ViewportsEnable;       // Enable Multi-Viewport / Platform Windows
+		//io.ConfigViewportsNoAutoMerge = true;
+		//io.ConfigViewportsNoTaskBarIcon = true;
+		//io.ConfigViewportsNoDefaultParent = true;
+		//io.ConfigDockingAlwaysTabBar = true;
+		//io.ConfigDockingTransparentPayload = true;
+		//io.ConfigFlags |= ImGuiConfigFlags_DpiEnableScaleFonts;     // FIXME-DPI: Experimental. THIS CURRENTLY DOESN'T WORK AS EXPECTED. DON'T USE IN USER APP!
+		//io.ConfigFlags |= ImGuiConfigFlags_DpiEnableScaleViewports; // FIXME-DPI: Experimental.
+
+		// Setup Dear ImGui style
+		ImGui::StyleColorsDark();
+		//ImGui::StyleColorsLight();
+
+		// When viewports are enabled we tweak WindowRounding/WindowBg so platform windows can look identical to regular ones.
+		ImGuiStyle& style = ImGui::GetStyle();
+		if (io.ConfigFlags & ImGuiConfigFlags_ViewportsEnable)
+		{
+			style.WindowRounding = 0.0f;
+			style.Colors[ImGuiCol_WindowBg].w = 1.0f;
+		}
+
+		// Setup Platform/Renderer backends
+		ImGui_ImplWin32_Init(hwnd);
+		ImGui_ImplDX11_Init(m_Device.Get(), m_Context.Get());
+
+		m_IsInit = true;
 	}
 
 	void DX11Renderer::Shutdown()
-	{
+	{	
 		CleanupRenderTarget();
 		m_SwapChain.Reset();
 		m_Context.Reset();
@@ -71,12 +107,43 @@ namespace Ethereal
 
 	void DX11Renderer::BeginFrame()
 	{
-		float clearColor[4] = { 1.0f, 1.0f, 0.0f, 1.0f };
+		if (!m_IsInit) return;
+		if (!m_RenderTargetView)
+		{
+			EE_LOG_ERROR("RTV is null");
+			return;
+		}
+		float clearColor[4] = { 0.01f, 0.01f, 0.01f, 1.0f };
 		m_Context->ClearRenderTargetView(m_RenderTargetView.Get(), clearColor);
+
+		ImGui_ImplDX11_NewFrame();
+		ImGui_ImplWin32_NewFrame();
+		ImGui::NewFrame();
 	}
 
 	void DX11Renderer::EndFrame()
 	{
+		if (!m_IsInit) return;
+		if (!m_RenderTargetView)
+		{
+			EE_LOG_ERROR("RTV is null");
+			return;
+		}
+
+		bool show_demo_window = true;
+		if (show_demo_window)
+			ImGui::ShowDemoWindow(&show_demo_window);
+		ImGuiIO& io = ImGui::GetIO(); (void)io;
+		ImGui::Render();
+		ImGui_ImplDX11_RenderDrawData(ImGui::GetDrawData());
+
+		// Update and Render additional Platform Windows
+		if (io.ConfigFlags & ImGuiConfigFlags_ViewportsEnable)
+		{
+			ImGui::UpdatePlatformWindows();
+			ImGui::RenderPlatformWindowsDefault();
+		}
+
 		m_SwapChain->Present(1, 0);
 	}
 
@@ -87,24 +154,45 @@ namespace Ethereal
 		CreateRenderTarget();
 	}
 
-	void DX11Renderer::DrawMesh(const Mesh& mesh)
+	void DX11Renderer::DrawRenderable(const Renderable& renderable)
 	{
-		if (mesh.Vertices.empty() || mesh.Indices.empty())
+		const Mesh* mesh = renderable.mesh;
+		const Material* material = renderable.material;
+		if (!mesh || !material || mesh->Vertices.empty() || mesh->Indices.empty())
 			return;
 
 		// Upload if not already uploaded
-		const_cast<Mesh&>(mesh).UploadToGPU(m_Device.Get());
+		const_cast<Mesh*>(mesh)->UploadToGPU(m_Device.Get());
 
 		// Set GPU buffers
 		UINT stride = sizeof(Vertex);
 		UINT offset = 0;
-		m_Context->IASetVertexBuffers(0, 1, mesh.VertexBuffer.GetAddressOf(), &stride, &offset);
-		m_Context->IASetIndexBuffer(mesh.IndexBuffer.Get(), DXGI_FORMAT_R32_UINT, 0);
+		m_Context->IASetVertexBuffers(0, 1, mesh->VertexBuffer.GetAddressOf(), &stride, &offset);
+		m_Context->IASetIndexBuffer(mesh->IndexBuffer.Get(), DXGI_FORMAT_R32_UINT, 0);
 		m_Context->IASetPrimitiveTopology(D3D11_PRIMITIVE_TOPOLOGY_TRIANGLELIST);
 
-		// TODO: Bind shaders and materials
+		auto vs = material->GetVertexShaderAsset();
+		auto ps = material->GetPixelShaderAsset();
 
-		m_Context->DrawIndexed(static_cast<UINT>(mesh.Indices.size()), 0, 0);
+		if (!vs || !ps)
+		{
+			EE_LOG_ERROR("Missing shader(s) in material");
+			return;
+		}
+
+		m_Context->IASetInputLayout(vs->GetInputLayout());
+		m_Context->VSSetShader(vs->GetVertexShader(), nullptr, 0);
+		m_Context->PSSetShader(ps->GetPixelShader(), nullptr, 0);
+
+		// TODO: Upload world matrix to constant buffer here
+
+		m_Context->DrawIndexed(static_cast<UINT>(mesh->Indices.size()), 0, 0);
+	}
+
+	void DX11Renderer::SetCameraConstants(const CameraConstants& camera)
+	{
+		// Update GPU constant buffer
+		//m_Context->UpdateSubresource(m_CameraConstantBuffer.Get(), 0, nullptr, &camera, 0, 0); // #TODO: This is broken camera will not work
 	}
 
 	void DX11Renderer::CreateRenderTarget()

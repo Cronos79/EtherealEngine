@@ -6,9 +6,12 @@
 #include "Assets/ModelAsset.h"
 #include "Assets/TextureAsset.h"
 #include "EtherealEngine.h"
+#include "Assets/ShaderAsset.h"
 
 namespace Ethereal
 {
+	class EngineContext;
+
 	class ENGINE_API AssetManager
 	{
 	public:
@@ -19,6 +22,7 @@ namespace Ethereal
 		bool LoadModel(const std::string& name);
 		bool LoadTexture(const std::string& name, ID3D11Device* device);
 		bool LoadSceneFromFile(const std::string& name);
+		bool LoadShader(const std::string& name, ShaderAsset::ShaderType type, ID3D11Device* device);
 
 		template<typename T>
 		std::shared_ptr<T> Get(const std::string& name)

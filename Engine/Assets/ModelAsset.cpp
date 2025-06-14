@@ -3,6 +3,9 @@
 #include <assimp/Importer.hpp>
 #include <assimp/scene.h>
 #include <assimp/postprocess.h>
+#include "AssetManager.h"
+#include "Core/EngineContext.h"
+#include "Renderer/Renderer.h"
 
 namespace Ethereal
 {
@@ -47,8 +50,24 @@ namespace Ethereal
 					// You'll handle loading the texture in Material later
 				}
 			}
-
+			
 			m_Materials.push_back(material);
+			material->SetVertexShader("BasicVertexShader");
+			material->SetPixelShader("BasicPixelShader");
+			auto renderer = EngineContext::Get().GetRenderer();
+			ID3D11Device* device = renderer->GetD3D11Device();
+			if (!device)
+			{
+				EE_LOG_ERROR("Cannot resolve shaders — D3D11 device unavailable!");
+				return false;
+			}
+			if (!material->ResolveShaders(EngineContext::Get().GetAssetManager(), device))
+			{
+				if (!material->GetVertexShader())
+					EE_LOG_ERROR("Material {} missing vertex shader!", i);
+				if (!material->GetPixelShader())
+					EE_LOG_ERROR("Material {} missing pixel shader!", i);
+			}
 		}
 
 		for (unsigned int m = 0; m < scene->mNumMeshes; ++m)

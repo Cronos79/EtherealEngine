@@ -5,8 +5,10 @@
 #include <d3d11.h>
 #include <DirectXMath.h>
 
-#include "Assets/TextureAsset.h"
+#include <memory>
 
+#include "Assets/TextureAsset.h"
+#include "ShaderAsset.h"
 
 namespace Ethereal
 {
@@ -28,6 +30,19 @@ namespace Ethereal
 
 		// Runtime asset resolving
 		bool ResolveTextures(AssetManager* assetManager, ID3D11Device* device);
+
+		void SetVertexShader(const std::string& shaderName);
+		ID3D11VertexShader* GetVertexShader() const;
+		const std::string& GetVertexShaderName() const;
+
+		void SetPixelShader(const std::string& shaderName);
+		const std::string& GetPixelShaderName() const;
+		ID3D11PixelShader* GetPixelShader() const;
+
+		ShaderAsset* GetVertexShaderAsset() const;
+		ShaderAsset* GetPixelShaderAsset() const;
+
+		bool ResolveShaders(AssetManager* assetManager, ID3D11Device* device);
 
 		// Getters
 		const std::string& GetDiffuseTextureName() const;
@@ -51,5 +66,13 @@ namespace Ethereal
 		Microsoft::WRL::ComPtr<ID3D11ShaderResourceView> m_SpecularTextureView;
 		Microsoft::WRL::ComPtr<ID3D11ShaderResourceView> m_MetallicTextureView;
 		Microsoft::WRL::ComPtr<ID3D11ShaderResourceView> m_RoughnessTextureView;
+
+		std::string m_VertexShaderName;
+		Microsoft::WRL::ComPtr<ID3D11VertexShader> m_VertexShader;
+		std::shared_ptr<ShaderAsset> m_VertexShaderAsset;
+
+		std::string m_PixelShaderName;
+		Microsoft::WRL::ComPtr<ID3D11PixelShader> m_PixelShader;
+		std::shared_ptr<ShaderAsset> m_PixelShaderAsset;
 	};
 }

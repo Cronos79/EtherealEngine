@@ -28,6 +28,10 @@ namespace Ethereal
 	protected:
 		bool m_Running = true;
 		Window m_Window;
+
+	private:
+		int32_t m_TEMPWidth;
+		int32_t m_TEMPHeight;
 	};
 
 	Application* CreateApplication();  // Forward declaration for GameApp

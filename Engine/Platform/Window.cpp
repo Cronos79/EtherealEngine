@@ -1,5 +1,9 @@
 #include "Platform/Window.h"
 #include <stdexcept>
+#include "imgui/imgui_impl_win32.h"
+
+
+extern IMGUI_IMPL_API LRESULT ImGui_ImplWin32_WndProcHandler(HWND hWnd, UINT msg, WPARAM wParam, LPARAM lParam);
 
 namespace Ethereal
 {
@@ -36,7 +40,7 @@ namespace Ethereal
 	}
 
 	Window::~Window()
-	{
+	{		
 		if (m_hwnd)
 			DestroyWindow(m_hwnd);
 	}
@@ -57,6 +61,9 @@ namespace Ethereal
 
 	LRESULT CALLBACK Window::WindowProc(HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lParam)
 	{
+		if (ImGui_ImplWin32_WndProcHandler(hwnd, uMsg, wParam, lParam))
+			return true;
+
 		switch (uMsg)
 		{
 		case WM_DESTROY:
